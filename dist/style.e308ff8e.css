@@ -137,11 +137,14 @@ img{
     background: #ffffffc6;
   }
   .preview-item .file-info .preview-info-progress{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
-    text-align: center;
     background: linear-gradient(
       82.3deg,
       rgba(150, 93, 233, 1) 10.8%,
@@ -149,7 +152,7 @@ img{
     );
     transition: width 0.22s linear;
 
-    width: 33%;
+    width: 0%;
   }
 
 

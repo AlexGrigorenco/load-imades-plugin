@@ -7957,7 +7957,7 @@ var upload = function upload(selector) {
   var clearInfo = function clearInfo(el) {
     el.style.height = '18%';
     el.classList.add('upload');
-    el.innerHTML = '<div class="relative h-[100%] w-[100%]"><div class="preview-info-progress"></div></div>';
+    el.innerHTML = '<div class="relative h-[100%] w-[100%]"><div class="preview-info-progress text-[16px]"></div></div>';
   };
   var onUploadHandler = function onUploadHandler() {
     preview.querySelectorAll('.preview-item button').forEach(function (item) {
@@ -7965,7 +7965,7 @@ var upload = function upload(selector) {
     });
     var previewInfo = preview.querySelectorAll('.file-info');
     previewInfo.forEach(clearInfo);
-    upload(files);
+    upload(files, previewInfo);
   };
   open.addEventListener('click', triggerInput);
   input.addEventListener('change', changeHandler);
@@ -7981,7 +7981,7 @@ exports.upload = upload;
 "use strict";
 
 var _app = require("firebase/app");
-require("firebase/storage");
+var _storage = require("firebase/storage");
 var _upload = require("./upload");
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -7994,13 +7994,28 @@ var firebaseConfig = {
 };
 // Initialize Firebase  
 var app = (0, _app.initializeApp)(firebaseConfig);
-var storage = app.storage;
-console.log(storage);
+var storage = (0, _storage.getStorage)();
+var storageRef = (0, _storage.ref)(storage);
 (0, _upload.upload)('#file', {
   multi: true,
   accept: ['.png', '.jpg', '.jpeg', '.gif', '.svg'],
-  onUpload: function onUpload(files) {
-    console.log(files);
+  onUpload: function onUpload(files, blocks) {
+    files.forEach(function (file, index) {
+      var spaceRef = (0, _storage.ref)(storage, "images/".concat(file.name));
+      var uploadTask = (0, _storage.uploadBytesResumable)(spaceRef, file);
+      uploadTask.on('state_changed', function (snapshot) {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes * 100).toFixed(0) + '%';
+        var block = blocks[index].querySelector('.preview-info-progress');
+        block.textContent = progress;
+        block.style.width = progress;
+      }, function (error) {
+        console.log('upload error');
+      }, function () {
+        (0, _storage.getDownloadURL)(uploadTask.snapshot.ref).then(function (downloadURL) {
+          console.log('File available at', downloadURL);
+        });
+      });
+    });
   }
 });
 },{"firebase/app":"node_modules/firebase/app/dist/esm/index.esm.js","firebase/storage":"node_modules/firebase/storage/dist/esm/index.esm.js","./upload":"JS/upload.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -8028,7 +8043,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40437" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38689" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -106,14 +106,14 @@ export const upload = (selector, options = {}) => {
     const clearInfo = (el) => {
         el.style.height = '18%'
         el.classList.add('upload')
-        el.innerHTML = '<div class="relative h-[100%] w-[100%]"><div class="preview-info-progress"></div></div>'
+        el.innerHTML = '<div class="relative h-[100%] w-[100%]"><div class="preview-info-progress text-[16px]"></div></div>'
     }
 
     const onUploadHandler = () => {
         preview.querySelectorAll('.preview-item button').forEach(item => item.remove())
         const previewInfo = preview.querySelectorAll('.file-info')
         previewInfo.forEach(clearInfo)
-        upload(files)
+        upload(files, previewInfo)
     }
 
 
